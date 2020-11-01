@@ -12,7 +12,7 @@
 
 
   <div id="wrapper">
-    <?php $this->load->view("_partials/sidebar_admin.php") ?>
+    <?php $this->load->view("_partials/sidebar.php") ?>
     <div id="content-wrapper">
       <div class="container-fluid">
         Hallo
