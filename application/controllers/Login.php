@@ -21,7 +21,9 @@ class Login extends CI_Controller
 	public function aksi_login()
 	{
 		$username 	= $this->input->post('username');
-		$password 	= MD5($this->input->post('password'));
+		$password 	= md5($this->db->escape($_POST['password']));
+
+		print_r($password);
 
 		$query_dsn	= "SELECT
 							*
