@@ -52,6 +52,8 @@ class Fakultas_controllers extends CI_Controller
 
     function import()
     {
+        $id_jurusan = $this->session->id_jurusan;
+        
         if (isset($_FILES["file"]["name"])) {
             $path = $_FILES["file"]["tmp_name"];
             $object = PHPExcel_IOFactory::load($path);
@@ -63,6 +65,7 @@ class Fakultas_controllers extends CI_Controller
                     $angkatan = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
                     $dosen_wali = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
                     $data[] = array(
+                        'id_jurusan'    => $id_jurusan,
                         'nama_kelas'  => $nama_kelas,
                         'angkatan'   => $angkatan,
                         'dosen_Wali'    => $dosen_wali
