@@ -22,7 +22,7 @@
             <span>Perkuliahan</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-            <a class="dropdown-item" href="<?= base_url('/Pengaturan/penggunaDosen') ?>">Fakultas</a>
+            <a class="dropdown-item" href="<?= base_url('/Perkuliahan_controllers') ?>">Mata Kuliah</a>
         </div>
     </li>
     <li class="nav-item">

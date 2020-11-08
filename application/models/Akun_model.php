@@ -21,7 +21,6 @@ class Akun_model extends CI_Model
                     email,
                     username,
                     password,
-                    user_role_id,
                     id_status
                 )
                 VALUES
@@ -33,7 +32,6 @@ class Akun_model extends CI_Model
                         $email,
                         $username,
                         '$password',
-                        2,
                         1
                     )";
         $sql = $this->db->query($query);

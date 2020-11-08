@@ -26,10 +26,22 @@
                         </div>
                         <div class="card card-default">
                             <div class="card-body">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item"><?php echo $jurusanByID['nama_jurusan']; ?></li>
-                                    <li class="list-group-item"><?php echo $jurusanByID['nama_fakultas']; ?></li>
-                                </ul>
+                                <form action="" method="post">
+                                    <div class="form-group">
+                                        <label for="nama_jurusan">Nama Jurusan</label>
+                                        <input type="text" class="form-control" id="nama_jurusan" name="nama_jurusan" value="<?= $jurusanByID['nama_jurusan'] ?>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_fakultas">Nama Fakultas</label>
+                                        <select class="form-control" id="id_fakultas" name="id_fakultas">
+                                            <option value="<?= $jurusanByID['nama_jurusan'] ?>" selected> <?= $jurusanByID['nama_fakultas'] ?> </option>
+                                            <?php foreach ($list_fakultas as $list_fakultas) { ?>
+                                                <option value="<?php echo $list_fakultas['id_fakultas']; ?>"><?php echo $list_fakultas['nama_fakultas']; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-dark mt-3" name="editJurusan">Ubah Data</button>
+                                </form>
                             </div>
                             <!--div class="card-footer small text-muted">Updated yesterday at 11:59 PM </div-->
                         </div>
