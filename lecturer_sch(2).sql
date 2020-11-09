@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 03 Nov 2020 pada 16.30
+-- Waktu pembuatan: 09 Nov 2020 pada 04.32
 -- Versi server: 10.4.8-MariaDB
 -- Versi PHP: 7.3.11
 
@@ -45,7 +45,7 @@ CREATE TABLE `dosen` (
 
 INSERT INTO `dosen` (`nip`, `nama_depan`, `nama_belakang`, `kode_dosen`, `username`, `email`, `password`, `id_status`) VALUES
 (1, 'Administator', '', 'ADM', 'admin', 'admin@admin.com', '7aec9d92c71acd6680c8da9f1c746da7', 0),
-(1103164005, 'Novansyah', 'h', 'NVN', 'novansyah', 'novansyah21@gmail.com', '969c56257d8a3a6892458e57dfbcceff', 2);
+(1103164005, 'Novansyah', 'Herman', 'NVN', 'novansyah', 'novansyah21@gmail.com', '969c56257d8a3a6892458e57dfbcceff', 2);
 
 -- --------------------------------------------------------
 
@@ -69,7 +69,8 @@ CREATE TABLE `dosen_additional` (
 --
 
 INSERT INTO `dosen_additional` (`id_additional`, `nip`, `jab_fungsional`, `jab_struktural`, `kota_asal`, `tanggal_lahir`, `alamat`, `no_telp`) VALUES
-(12, 1, '', '', '', '', '', '');
+(14, 1, '', '', '', '', '', ''),
+(15, 1103164005, 'Pengawas', 'Pengawis', 'Jakarta', '02-11-1997', 'Jl. Kapuk Kayu Besar RT.006/011 No.61 , Cengkareng Timur', '081367542285');
 
 -- --------------------------------------------------------
 
@@ -183,7 +184,8 @@ CREATE TABLE `kelas` (
 --
 
 INSERT INTO `kelas` (`id_kelas`, `id_jurusan`, `nama_kelas`, `angkatan`, `dosen_wali`) VALUES
-(2, 6, 'TK-40-05', 2016, 'FSM');
+(2, 6, 'TK-40-05', 2016, 'FSM'),
+(18, 6, 'TK-40-02', 2016, 'BRH');
 
 -- --------------------------------------------------------
 
@@ -195,9 +197,17 @@ CREATE TABLE `matkul` (
   `id_matkul` int(11) NOT NULL,
   `nama_matkul` varchar(255) NOT NULL,
   `kode_matkul` varchar(255) NOT NULL,
-  `id_jurusan` int(11) NOT NULL,
-  `id_fakultas` int(11) NOT NULL
+  `sks` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `matkul`
+--
+
+INSERT INTO `matkul` (`id_matkul`, `nama_matkul`, `kode_matkul`, `sks`) VALUES
+(11, 'Bahasa Indonesia', 'LUH1A2', 3),
+(12, 'Bahasa Inggris I', 'LUH1B2', 3),
+(13, 'Pendidikan dan Kewarganeagaran', 'HUH1G3', 3);
 
 -- --------------------------------------------------------
 
@@ -207,10 +217,7 @@ CREATE TABLE `matkul` (
 
 CREATE TABLE `mengajar` (
   `id_mengajar` int(11) NOT NULL,
-  `id_dosen` int(11) NOT NULL,
-  `id_fakultas` int(11) NOT NULL,
-  `id_jurusan` int(11) NOT NULL,
-  `id_kelas` int(11) NOT NULL,
+  `nip` int(11) NOT NULL,
   `id_matkul` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -224,8 +231,31 @@ CREATE TABLE `penjadwalan` (
   `id_penjadwalan` int(11) NOT NULL,
   `id_mengajar` int(11) NOT NULL,
   `id_preferensi` int(11) NOT NULL,
-  `id_ruangan` int(11) NOT NULL
+  `id_ruangan` int(11) NOT NULL,
+  `id_perkuliahan` int(11) NOT NULL,
+  `id_kelas` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `perkuliahan`
+--
+
+CREATE TABLE `perkuliahan` (
+  `id_perkuliahan` int(11) NOT NULL,
+  `id_fakultas` int(11) NOT NULL,
+  `angkatan` int(11) NOT NULL,
+  `id_matkul` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `perkuliahan`
+--
+
+INSERT INTO `perkuliahan` (`id_perkuliahan`, `id_fakultas`, `angkatan`, `id_matkul`) VALUES
+(1, 4, 2020, 11),
+(2, 4, 2020, 13);
 
 -- --------------------------------------------------------
 
@@ -346,7 +376,8 @@ ALTER TABLE `dosen`
 -- Indeks untuk tabel `dosen_additional`
 --
 ALTER TABLE `dosen_additional`
-  ADD PRIMARY KEY (`id_additional`);
+  ADD PRIMARY KEY (`id_additional`),
+  ADD KEY `nip` (`nip`);
 
 --
 -- Indeks untuk tabel `fakultas`
@@ -370,13 +401,15 @@ ALTER TABLE `hari`
 -- Indeks untuk tabel `jurusan`
 --
 ALTER TABLE `jurusan`
-  ADD PRIMARY KEY (`id_jurusan`);
+  ADD PRIMARY KEY (`id_jurusan`),
+  ADD KEY `id_fakultas` (`id_fakultas`);
 
 --
 -- Indeks untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
-  ADD PRIMARY KEY (`id_kelas`);
+  ADD PRIMARY KEY (`id_kelas`),
+  ADD KEY `id_jurusan` (`id_jurusan`);
 
 --
 -- Indeks untuk tabel `matkul`
@@ -389,10 +422,7 @@ ALTER TABLE `matkul`
 --
 ALTER TABLE `mengajar`
   ADD PRIMARY KEY (`id_mengajar`),
-  ADD KEY `id_dosen` (`id_dosen`),
-  ADD KEY `id_fakultas` (`id_fakultas`),
-  ADD KEY `id_jurusan` (`id_jurusan`),
-  ADD KEY `id_kelas` (`id_kelas`),
+  ADD KEY `id_dosen` (`nip`),
   ADD KEY `id_matkul` (`id_matkul`);
 
 --
@@ -402,7 +432,17 @@ ALTER TABLE `penjadwalan`
   ADD PRIMARY KEY (`id_penjadwalan`),
   ADD KEY `id_mengajar` (`id_mengajar`),
   ADD KEY `id_preferensi` (`id_preferensi`),
-  ADD KEY `id_ruangan` (`id_ruangan`);
+  ADD KEY `id_ruangan` (`id_ruangan`),
+  ADD KEY `id_perkuliahan` (`id_perkuliahan`),
+  ADD KEY `id_kelas` (`id_kelas`);
+
+--
+-- Indeks untuk tabel `perkuliahan`
+--
+ALTER TABLE `perkuliahan`
+  ADD PRIMARY KEY (`id_perkuliahan`),
+  ADD KEY `id_fakultas` (`id_fakultas`),
+  ADD KEY `id_matkul` (`id_matkul`);
 
 --
 -- Indeks untuk tabel `preferensi`
@@ -447,7 +487,7 @@ ALTER TABLE `user_roles`
 -- AUTO_INCREMENT untuk tabel `dosen_additional`
 --
 ALTER TABLE `dosen_additional`
-  MODIFY `id_additional` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_additional` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT untuk tabel `fakultas`
@@ -477,13 +517,13 @@ ALTER TABLE `jurusan`
 -- AUTO_INCREMENT untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
-  MODIFY `id_kelas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_kelas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT untuk tabel `matkul`
 --
 ALTER TABLE `matkul`
-  MODIFY `id_matkul` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_matkul` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT untuk tabel `mengajar`
@@ -496,6 +536,12 @@ ALTER TABLE `mengajar`
 --
 ALTER TABLE `penjadwalan`
   MODIFY `id_penjadwalan` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `perkuliahan`
+--
+ALTER TABLE `perkuliahan`
+  MODIFY `id_perkuliahan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `preferensi`
@@ -532,13 +578,28 @@ ALTER TABLE `dosen`
   ADD CONSTRAINT `dosen_ibfk_1` FOREIGN KEY (`id_status`) REFERENCES `status` (`id_status`);
 
 --
+-- Ketidakleluasaan untuk tabel `dosen_additional`
+--
+ALTER TABLE `dosen_additional`
+  ADD CONSTRAINT `dosen_additional_ibfk_1` FOREIGN KEY (`nip`) REFERENCES `dosen` (`nip`);
+
+--
+-- Ketidakleluasaan untuk tabel `jurusan`
+--
+ALTER TABLE `jurusan`
+  ADD CONSTRAINT `jurusan_ibfk_1` FOREIGN KEY (`id_fakultas`) REFERENCES `fakultas` (`id_fakultas`);
+
+--
+-- Ketidakleluasaan untuk tabel `kelas`
+--
+ALTER TABLE `kelas`
+  ADD CONSTRAINT `kelas_ibfk_1` FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan` (`id_jurusan`);
+
+--
 -- Ketidakleluasaan untuk tabel `mengajar`
 --
 ALTER TABLE `mengajar`
-  ADD CONSTRAINT `mengajar_ibfk_1` FOREIGN KEY (`id_dosen`) REFERENCES `dosen` (`nip`),
-  ADD CONSTRAINT `mengajar_ibfk_2` FOREIGN KEY (`id_fakultas`) REFERENCES `fakultas` (`id_fakultas`),
-  ADD CONSTRAINT `mengajar_ibfk_3` FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan` (`id_jurusan`),
-  ADD CONSTRAINT `mengajar_ibfk_4` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`),
+  ADD CONSTRAINT `mengajar_ibfk_1` FOREIGN KEY (`nip`) REFERENCES `dosen` (`nip`),
   ADD CONSTRAINT `mengajar_ibfk_5` FOREIGN KEY (`id_matkul`) REFERENCES `matkul` (`id_matkul`);
 
 --
@@ -546,7 +607,17 @@ ALTER TABLE `mengajar`
 --
 ALTER TABLE `penjadwalan`
   ADD CONSTRAINT `penjadwalan_ibfk_1` FOREIGN KEY (`id_mengajar`) REFERENCES `mengajar` (`id_mengajar`),
-  ADD CONSTRAINT `penjadwalan_ibfk_2` FOREIGN KEY (`id_preferensi`) REFERENCES `preferensi` (`id_preferensi`);
+  ADD CONSTRAINT `penjadwalan_ibfk_2` FOREIGN KEY (`id_preferensi`) REFERENCES `preferensi` (`id_preferensi`),
+  ADD CONSTRAINT `penjadwalan_ibfk_3` FOREIGN KEY (`id_ruangan`) REFERENCES `ruangan` (`id_ruangan`),
+  ADD CONSTRAINT `penjadwalan_ibfk_4` FOREIGN KEY (`id_perkuliahan`) REFERENCES `perkuliahan` (`id_perkuliahan`),
+  ADD CONSTRAINT `penjadwalan_ibfk_5` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`);
+
+--
+-- Ketidakleluasaan untuk tabel `perkuliahan`
+--
+ALTER TABLE `perkuliahan`
+  ADD CONSTRAINT `perkuliahan_ibfk_1` FOREIGN KEY (`id_fakultas`) REFERENCES `fakultas` (`id_fakultas`),
+  ADD CONSTRAINT `perkuliahan_ibfk_2` FOREIGN KEY (`id_matkul`) REFERENCES `matkul` (`id_matkul`);
 
 --
 -- Ketidakleluasaan untuk tabel `preferensi`
