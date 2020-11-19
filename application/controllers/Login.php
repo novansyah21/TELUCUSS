@@ -46,7 +46,7 @@ class Login extends CI_Controller
 				'username' 			=> $row_dosen['username'],
 				'password' 			=> $row_dosen['password'],
 				'email' 			=> $row_dosen['email'],
-				'user_role' 		=> $row_dosen['user_role_id'],
+				// 'user_role' 		=> $row_dosen['user_role_id'],
 				'id_status' 		=> $row_dosen['id_status']
 			);
 			$this->session->set_userdata($data_session);
